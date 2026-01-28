@@ -7,14 +7,6 @@ from pydeseq2.dds import DeseqDataSet
 from pydeseq2.ds import DeseqStats
 import time
 
-DIR = Path("/Users/kvying/Files/ucsb-local/rothman/deg-pipeline")
-OUTDIR = DIR / "out"
-DEGDIR = OUTDIR / 'degs'
-CANDIDATESDIR = OUTDIR / 'candidates'
-os.makedirs(OUTDIR, exist_ok=True)
-os.makedirs(DEGDIR, exist_ok=True)
-os.makedirs(CANDIDATESDIR, exist_ok=True)
-
 
 def _targetstrains(tpms: pd.DataFrame, loss_strains: list, keep_strains: list) -> pd.DataFrame:
 	cols = ['transcript', 'N2'] + loss_strains + keep_strains
@@ -177,6 +169,14 @@ def findsigdegs(degdir: Path, sigmatrixpath: Path, loss_strains: list, keep_stra
 
 
 if __name__ == "__main__":
+	DIR = Path("/Users/kvying/Files/ucsb-local/rothman/deg-pipeline")
+	OUTDIR = DIR / "out"
+	DEGDIR = OUTDIR / 'degs'
+	CANDIDATESDIR = OUTDIR / 'candidates'
+	os.makedirs(OUTDIR, exist_ok=True)
+	os.makedirs(DEGDIR, exist_ok=True)
+	os.makedirs(CANDIDATESDIR, exist_ok=True)
+
 	loss_strains = ['CX11314']
 	keep_strains = ['LKC34', 'ED3017', 'JU775', 'MY16', 'MY23', 'JT11398', 'CB4856']
 	sm = sigmatrix(OUTDIR/'resolved_tpms.tsv', loss_strains, keep_strains, nworkers=4, export=DEGDIR)
