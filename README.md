@@ -15,6 +15,9 @@
 
 ### `genepaircorr`
 ##### `0-srx-to-srr`
+- `srxclean.py`: Parses gene expression accession ID table from Wormbase into a `.txt` file. 
+- `getsrrlists.sh`: Queries using the SRR lists of all provided SRX's using Entrez Direct. 
+- `stitchsrrlists.sh`: Concatenates all SRR lists produced from `getsrrlists.sh` into one `.txt` file. 
 ##### `1-srr-to-fastq`
 - `prefetch.sh`:
 - `getfastqs.sh`:
