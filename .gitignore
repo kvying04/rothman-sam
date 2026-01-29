@@ -3,3 +3,9 @@
 *.DS_Store
 *.txt
 **/__*/
+*.fna
+*.gtf
+*.fastq
+*.sra
+*.bam
+*.tpm
