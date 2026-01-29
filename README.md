@@ -3,7 +3,7 @@
 ## `deg-pipeline`
 **`isoforms.py`**: Resolves discrepancies in naming of transcripts in RNAseq data by cross-referencing each isoform with Wormbase through its REST API. 
 
-**`intersections.py`**: Finds significant DEGs that serve as candidate genes for an observed phenotype. First generates a significance matrix encoding directionality of log-fold change from N2 (if $p_{adj} < \alpha$). Finds genes in significance matrix consistently down/upregulated in the `loss` group but variant in the `keep` group. 
+**`intersections.py`**: Finds significant DEGs that serve as candidate genes for an observed phenotype. First finds differentially expressed genes (DEGs) and thresholds significance using DESeq2. From this, generates a significance matrix encoding directionality of log-fold change from N2 (if $p_{adj} < \alpha$). Finds genes in significance matrix consistently down/upregulated in the `loss` group but variant in the `keep` group. 
 
 ## `snps-pipeline`
 **`getsnps.py`**:
