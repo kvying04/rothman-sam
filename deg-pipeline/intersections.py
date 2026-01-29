@@ -1,8 +1,7 @@
-from isoforms import resolveiso
 import pandas as pd
 import os
 from pathlib import Path
-from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
+from concurrent.futures import ProcessPoolExecutor
 from pydeseq2.dds import DeseqDataSet
 from pydeseq2.ds import DeseqStats
 import time
