@@ -10,3 +10,4 @@
 *.bam
 *.tpm
 *.sra.*
+.sratk/*
