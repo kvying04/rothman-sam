@@ -6,6 +6,8 @@
 **`intersections.py`**: Finds significant DEGs that serve as candidate genes for an observed phenotype. First finds differentially expressed genes (DEGs) and thresholds significance using PyDESeq2.[^1] From this, generates a significance matrix encoding directionality of log-fold change from N2 (if $p_{adj} < \alpha$). Finds genes in significance matrix consistently down/upregulated in the loss group but variant in the keep group. 
 
 ## `snps-pipeline`
+**`parsegtf.py`**: Generates a location map of genes within the genome according to the reference genome (taken from gene transfer format file) for easier downstream handling.[^6]
+
 **`getsnps.py`**:
 
 **`snpstogene.py`**:
