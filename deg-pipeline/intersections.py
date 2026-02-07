@@ -141,7 +141,7 @@ def _setop(row: pd.Series, loss_strains: list, keep_strains: list) -> bool:
 		return False
 
 
-def findsigdegs(degdir: Path, sigmatrixpath: Path, loss_strains: list, keep_strains: list, export: Path) -> list:
+def findsigdegs(degdir: Path, sigmatrixpath: Path, loss_strains: list, keep_strains: list, export: Path=None) -> list:
 	# tpms = pd.read_csv(tpmpath, sep='\t').reset_index(drop=True)
 	degs = {}
 	for degfile in degdir.iterdir():
