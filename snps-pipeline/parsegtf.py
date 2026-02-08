@@ -1,5 +1,6 @@
 import pandas as pd
 from pathlib import Path
+import json
 import os
 
 def gtfdf(gtfpath: Path) -> pd.DataFrame:
@@ -11,11 +12,20 @@ def gtfdf(gtfpath: Path) -> pd.DataFrame:
 
 def getloc(gtf: pd.DataFrame) -> pd.DataFrame:
 	locdf = pd.DataFrame()
-
+	gtf = gtf[gtf['feature'] == 'gene']
 	locdf['gene'] = gtf['attribute'].str.extract(r'gene_id "([^"]+)"', expand=False)
-	locdf['loc'] = gtf['chromosome'].astype(str) + ":" + gtf['start'].astype(str) + ".." + gtf['end'].astype(str)
+	locdf['chromosome'] = gtf['chromosome'].astype(str)
+	locdf['start'] = gtf['start']
+	locdf['end'] = gtf['end']
 
 	return locdf
+
+def convertchromosomes(locmappath: Path, chromosomemap: dict) -> None:
+	locmap = pd.read_csv(locmappath, sep='\t')
+	locmap['chromosome'] = locmap['chromosome'].str.split('.').str[0].map(chromosomemap).fillna(locmap['chromosome'])
+
+	locmap.to_csv(locmappath, sep='\t', index=False)
+
 
 
 if __name__ == "__main__":
@@ -27,3 +37,7 @@ if __name__ == "__main__":
 	gtf = gtfdf(REFDIR/"ce11.gtf")
 	locmap = getloc(gtf)
 	locmap.to_csv(OUTDIR/"locmap.tsv", sep='\t', index=False)
+
+	chromosomemap = pd.read_csv(REFDIR/"chromconversion.tsv", sep='\t')
+	chromosomemap = chromosomemap.set_index('RefSeq')['Chrom'].to_dict()
+	convertchromosomes(OUTDIR/"locmap.tsv", chromosomemap)

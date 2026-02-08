@@ -1,5 +1,3 @@
-import parsegtf
-
 import pandas as pd
 from pathlib import Path
 
@@ -69,10 +67,12 @@ def snpsofinterest(vcf: pd.DataFrame, keep_strains: list, loss_strains: list) ->
 	interestingsnps = vcf.loc[:, '#CHROM':'FORMAT']
 
 	for isolate in keep_strains:
-		interestingsnps[isolate] = _snpsofinterest_col(vcf[isolate], 'keep')
+		interestingsnps[isolate] = vcf[isolate]
+		interestingsnps[f"{isolate}_K"] = _snpsofinterest_col(vcf[isolate], 'keep')
 
 	for isolate in loss_strains:
-		interestingsnps[isolate] = _snpsofinterest_col(vcf[isolate], 'loss')
+		interestingsnps[isolate] = vcf[isolate]
+		interestingsnps[f"{isolate}_K"] = _snpsofinterest_col(vcf[isolate], 'loss')
 
 	interestingsnps['max_keep'] = interestingsnps[keep_strains].max(axis=1)
 	interestingsnps['min_loss'] = interestingsnps[loss_strains].min(axis=1)
