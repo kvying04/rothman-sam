@@ -13,7 +13,6 @@ def getloc(gtf: pd.DataFrame) -> pd.DataFrame:
 	locdf = pd.DataFrame()
 
 	locdf['gene'] = gtf['attribute'].str.extract(r'gene_id "([^"]+)"', expand=False)
-	# location = gtf['start'].str.cat(gtf['end'].astype(str), sep="..")
 	locdf['loc'] = gtf['chromosome'].astype(str) + ":" + gtf['start'].astype(str) + ".." + gtf['end'].astype(str)
 
 	return locdf
