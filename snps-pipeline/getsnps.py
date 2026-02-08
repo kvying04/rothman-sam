@@ -74,8 +74,11 @@ def snpsofinterest(vcf: pd.DataFrame, keep_strains: list, loss_strains: list) ->
 		interestingsnps[isolate] = vcf[isolate]
 		interestingsnps[f"{isolate}_K"] = _snpsofinterest_col(vcf[isolate], 'loss')
 
-	interestingsnps['max_keep'] = interestingsnps[keep_strains].max(axis=1)
-	interestingsnps['min_loss'] = interestingsnps[loss_strains].min(axis=1)
+	keep_strains_K = [f"{keep_strain}_K" for keep_strain in keep_strains]
+	loss_strains_K = [f"{loss_strain}_K" for loss_strain in loss_strains]
+
+	interestingsnps['max_keep'] = interestingsnps[keep_strains_K].max(axis=1)
+	interestingsnps['min_loss'] = interestingsnps[loss_strains_K].min(axis=1)
 
 	return interestingsnps[interestingsnps['max_keep'] < interestingsnps['min_loss']]
 

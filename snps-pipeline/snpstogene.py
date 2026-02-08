@@ -19,7 +19,7 @@ def snpstogene(snpspath: Path, locmappath: Path, isolates: list) -> pd.DataFrame
 	snpgenes = res.df
 	snpgenes.drop(columns=['End'], inplace=True)
 	snpgenes.columns = ['Chr', 'SNPPos'] + isolates + [f"{isolate}_K" for isolate in isolates] + ['Gene', 'Start', 'End']
-	snpgenes = snpgenes[['Chr', 'SNPPos', 'Gene', 'Start', 'End'] + isolates + [f"{isolate}_K" for isolate in isolates]]
+	snpgenes = snpgenes[['Chr', 'SNPPos', 'Gene', 'Start', 'End'] + [f"{isolate}_K" for isolate in isolates] + isolates]
 	snpgenes.drop_duplicates()
 
 	return snpgenes
