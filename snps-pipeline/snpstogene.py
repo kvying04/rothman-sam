@@ -6,8 +6,8 @@ def snpstogene(snpspath: Path, locmappath: Path, isolates: list) -> pd.DataFrame
 	snps = pd.read_csv(snpspath, sep='\t')
 	locmap = pd.read_csv(locmappath, sep='\t')
 
-	snps = snps.loc[:, ['#CHROM', 'POS'] + isolates + [f"{isolate}_K" for isolate in isolates]]
-	snps.columns = ['Chromosome', 'Start'] + isolates + [f"{isolate}_K" for isolate in isolates]
+	snps = snps.loc[:, ['#CHROM', 'POS', 'REF', 'ALT'] + isolates + [f"{isolate}_K" for isolate in isolates]]
+	snps.columns = ['Chromosome', 'Start', 'REF', 'ALT'] + isolates + [f"{isolate}_K" for isolate in isolates]
 
 	locmap = locmap.loc[:, ['gene', 'chromosome', 'start', 'end']]
 	locmap.columns = ['Gene', 'Chromosome', 'Start', 'End']
@@ -18,8 +18,8 @@ def snpstogene(snpspath: Path, locmappath: Path, isolates: list) -> pd.DataFrame
 	res = snpspr.join(locmappr)
 	snpgenes = res.df
 	snpgenes.drop(columns=['End'], inplace=True)
-	snpgenes.columns = ['Chr', 'SNPPos'] + isolates + [f"{isolate}_K" for isolate in isolates] + ['Gene', 'Start', 'End']
-	snpgenes = snpgenes[['Chr', 'SNPPos', 'Gene', 'Start', 'End'] + [f"{isolate}_K" for isolate in isolates] + isolates]
+	snpgenes.columns = ['Chr', 'SNPPos', 'REF', 'ALT'] + isolates + [f"{isolate}_K" for isolate in isolates] + ['Gene', 'Start', 'End']
+	snpgenes = snpgenes[['Chr', 'SNPPos', 'Gene', 'Start', 'End', 'REF', 'ALT'] + [f"{isolate}_K" for isolate in isolates] + isolates]
 	snpgenes.drop_duplicates()
 
 	return snpgenes
