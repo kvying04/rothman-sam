@@ -54,33 +54,34 @@ def loadvcf(vcfpath: Path, cleanpath: Path, isolates: list, filteredpath: Path) 
 def _snpsofinterest_col(vcfcol: pd.Series, phenotype: str) -> pd.Series:
 	vcfcol = vcfcol.str.extract(r'(\d+)/(\d+)')
 	if phenotype == 'loss':
-		vcfcol = vcfcol.fillna(1)
+		vcfcol_summable = vcfcol.fillna(1)
 	elif phenotype == 'keep':
-		vcfcol = vcfcol.fillna(0)
+		vcfcol_summable = vcfcol.fillna(0)
 	
-	vcfcol = vcfcol.astype(int).sum(axis=1)
+	vcfcol = vcfcol.fillna(-1).astype(int).sum(axis=1)
+	vcfcol = vcfcol.mask(vcfcol < 0, '.')
+
+	vcfcol_summable = vcfcol_summable.astype(int).sum(axis=1)
 	
-	return vcfcol
+	return vcfcol_summable, vcfcol
 
 
 def snpsofinterest(vcf: pd.DataFrame, keep_strains: list, loss_strains: list) -> pd.DataFrame:
 	interestingsnps = vcf.loc[:, '#CHROM':'FORMAT']
+	snpfilter = pd.DataFrame()
 
 	for isolate in keep_strains:
 		interestingsnps[isolate] = vcf[isolate]
-		interestingsnps[f"{isolate}_K"] = _snpsofinterest_col(vcf[isolate], 'keep')
+		snpfilter[isolate], interestingsnps[f"{isolate}_condition"] = _snpsofinterest_col(vcf[isolate], 'keep')
 
 	for isolate in loss_strains:
 		interestingsnps[isolate] = vcf[isolate]
-		interestingsnps[f"{isolate}_K"] = _snpsofinterest_col(vcf[isolate], 'loss')
+		snpfilter[isolate], interestingsnps[f"{isolate}_condition"] = _snpsofinterest_col(vcf[isolate], 'loss')
 
-	keep_strains_K = [f"{keep_strain}_K" for keep_strain in keep_strains]
-	loss_strains_K = [f"{loss_strain}_K" for loss_strain in loss_strains]
+	snpfilter['max_keep'] = snpfilter[keep_strains].max(axis=1)
+	snpfilter['min_loss'] = snpfilter[loss_strains].min(axis=1)
 
-	interestingsnps['max_keep'] = interestingsnps[keep_strains_K].max(axis=1)
-	interestingsnps['min_loss'] = interestingsnps[loss_strains_K].min(axis=1)
-
-	return interestingsnps[interestingsnps['max_keep'] < interestingsnps['min_loss']]
+	return interestingsnps[snpfilter['max_keep'] < snpfilter['min_loss']]
 
 
 if __name__ == "__main__":
