@@ -1,5 +1,5 @@
 # Sam Stuff
-`Last updated: Feb 12 2026`
+> Last updated: Feb 12 2026
 ## `deg-pipeline`
 **`isoforms.py`**: Resolves discrepancies in naming of transcripts in RNAseq data by cross-referencing each isoform with Wormbase through its REST API. 
 
