@@ -12,3 +12,4 @@
 *.sra.*
 .sratk/*
 *.vcf
+*.tiff
