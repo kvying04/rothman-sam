@@ -6,23 +6,27 @@ import os
 import gc
 
 
-def _readtiffs(rawdir: Path) -> dict[str, np.ndarray]:
-	rawimgs = {}
+def readtiffs(rawdir: Path, channel: int = 0) -> dict[str, np.ndarray]:
+	imgs = {}
 
 	for file in os.listdir(rawdir):
 		try: 
-			label = Path(file).stem.replace('.ome', '')
-			img = skio.imread(rawdir / file)[1] # get second channel
-			rawimgs[label] = img
+			label = '.'.join(Path(file).stem.split('.')[:-1]) # ex. "file.seg.tiff" -> "file"
+			img = skio.imread(rawdir / file)
+			
+			if len(img.shape) > 3:
+				img = img[channel]
+			
+			imgs[label] = img
 		except:
 			print(f"\tCould not read \"{file}\"")
 			continue
 	
-	return rawimgs
+	return imgs
 
 
 # for segcellpose(): implement model.eval() settings into params?
-def segcellpose(rawdir: Path, segdir: Path, modeldir: Path, flow: float = 0.7, cellprob: float = 0.2, norm: dict = {"tile_norm_blocksize": 0}) -> None:
+def segcellpose(rawdir: Path, segdir: Path, modeldir: Path, channel: int = 1, flow: float = 0.7, cellprob: float = 0.2, norm: dict = {"tile_norm_blocksize": 0}) -> None:
 	os.environ["CELLPOSE_LOCAL_MODELS_PATH"] = str(modeldir)
 	os.makedirs(modeldir, exist_ok=True)
 	os.makedirs(segdir, exist_ok=True)
@@ -33,7 +37,7 @@ def segcellpose(rawdir: Path, segdir: Path, modeldir: Path, flow: float = 0.7, c
 		raise ImportError("No GPU access, change your runtime")
 
 	print("Reading TIFFs...")
-	rawimgs = _readtiffs(rawdir)
+	rawimgs = readtiffs(rawdir, channel=channel)
 	
 	print("Loading model...")
 	model = models.CellposeModel(gpu=True)
@@ -46,7 +50,9 @@ def segcellpose(rawdir: Path, segdir: Path, modeldir: Path, flow: float = 0.7, c
 									normalize=norm)
 		gc.collect()
 		print(f"\tSuccessfully segmented {label}")
-		skio.imsave(segdir / f"{label}_seg.tiff", masks, check_contrast=False)
+		skio.imsave(segdir / f"{label}.seg.tiff", masks, check_contrast=False)
+	
+	return
 
 
 if __name__ == "__main__":
@@ -60,4 +66,4 @@ if __name__ == "__main__":
 	flow = 0.7
 	cellprob = 0.2
 
-	segcellpose(RAWDIR, SEGDIR, MODELDIR, flow=flow, cellprob=cellprob)
+	segcellpose(RAWDIR, SEGDIR, MODELDIR, channel=1, flow=flow, cellprob=cellprob)
