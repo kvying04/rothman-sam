@@ -20,6 +20,7 @@ def _readtiffs(rawdir: Path) -> dict[str, np.ndarray]:
 	
 	return rawimgs
 
+
 # for segcellpose(): implement model.eval() settings into params?
 def segcellpose(rawdir: Path, segdir: Path, modeldir: Path, flow: float = 0.7, cellprob: float = 0.2, norm: dict = {"tile_norm_blocksize": 0}) -> None:
 	os.environ["CELLPOSE_LOCAL_MODELS_PATH"] = str(modeldir)
