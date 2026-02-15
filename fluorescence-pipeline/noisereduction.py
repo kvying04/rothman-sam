@@ -1,9 +1,6 @@
 from skimage import io as skio, measure, morphology, segmentation
-from matplotlib import pyplot as plt
 import numpy as np
-from cellpose import models, core, io as cpio, plot
 from pathlib import Path
-from tqdm import trange
 from segcellpose import readtiffs
 import json
 import os
