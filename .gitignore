@@ -13,3 +13,5 @@
 .sratk/*
 *.vcf
 *.tiff
+*.bcf
+*.fna.fai
