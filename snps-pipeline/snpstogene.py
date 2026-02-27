@@ -8,13 +8,11 @@ def snpstogene(snpspath: Path, locmappath: Path, isolates: list) -> pd.DataFrame
 
 	snps = snps.loc[:, ['#CHROM', 'POS', 'REF', 'ALT'] + isolates + [f"{isolate}_condition" for isolate in isolates]]
 	snps.columns = ['Chromosome', 'Start', 'REF', 'ALT'] + isolates + [f"{isolate}_condition" for isolate in isolates]
-
 	locmap = locmap.loc[:, ['gene', 'chromosome', 'start', 'end']]
 	locmap.columns = ['Gene', 'Chromosome', 'Start', 'End']
-
 	snpspr = pr.PyRanges(snps.assign(End=snps['Start'] + 1))
 	locmappr = pr.PyRanges(locmap)
-
+	print(snpspr.columns, locmappr.columns)
 	res = snpspr.join(locmappr)
 	snpgenes = res.df
 	snpgenes.drop(columns=['End'], inplace=True)
@@ -25,7 +23,7 @@ def snpstogene(snpspath: Path, locmappath: Path, isolates: list) -> pd.DataFrame
 	return snpgenes
 
 if __name__ == "__main__":
-	DIR = Path("/home/hanwenying/rothman")
+	DIR = Path("/home/hanwenying/rothman-sam")
 	OUTDIR = DIR / "snps-pipeline/out"
 	SNPSPATH = OUTDIR / "interestingsnps.tsv"
 	LOCMAPPATH = OUTDIR / "locmap.tsv"

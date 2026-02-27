@@ -3,7 +3,7 @@ library(ggplot2)
 #SET PATH
 
 # Set your working directory to the Desktop
-setwd("~/Desktop/slidingwindow")
+setwd("/home/hanwenying/rothman-sam/slidingwindow")
 getwd() 
 
 
@@ -20,7 +20,7 @@ cxGroups <- c("JR4295", "JR4296", "JR4297") #MANIPULATE INDV INCLUDED HERE
 #CREATE DATA FRAMES
 #chromosomes_filenames <- c("chrI.csv", "chrII.csv", "chrIII.csv", "chrIV.csv", "chrV.csv", "chrX.csv") DON'T THINK NEED FOR 
 #chromosomes_filenames <- c("chrI.csv") #TO TRY ONE AT A TIME
-chrAll <- read.csv("windowGeneration/withreference_4_reformatted_forslidingWindow.csv", sep = ',' )    
+chrAll <- read.csv("/home/hanwenying/rothman-sam/slidingwindow/slidingwindow-demo.csv", sep = ',' )    
 for(c in 1:7){
   chrName <- chromosomes[c]
   print(chrName)
@@ -35,6 +35,7 @@ for(c in 1:7){
   position=c()
   snpCountcx=c()
   cxCount <- 0
+
   #for(p in seq(5820000, 5850000, by=1)) {  # adjustable 
   for(p in seq(window, chrLen, by=100000)) {  # Endpoint should be adjusted
     #for(p in seq(window, 5000, by=1000)) {  # test case

@@ -15,3 +15,6 @@
 *.tiff
 *.bcf
 *.fna.fai
+*.csv
+*.vcf.gz
+*.csi

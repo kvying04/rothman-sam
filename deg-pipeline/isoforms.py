@@ -27,11 +27,28 @@ def _getisomap(isos: list) -> dict[str, list]:
 	return {transcript: isos for transcript, isos in isomap.items() if len(isos) > 1}
 
 
+# def _queryiso(iso: str, session: requests.Session) -> bool:
+# 	url = f"http://rest.wormbase.org/rest/widget/transcript/{iso}/overview"
+# 	with session.get(url) as response:
+# 		query = response.json()
+# 	return 'reason' in query
+
 def _queryiso(iso: str, session: requests.Session) -> bool:
-	url = f"http://rest.wormbase.org/rest/widget/transcript/{iso}/overview"
-	with session.get(url) as response:
-		query = response.json()
-	return 'reason' in query
+    url = f"http://rest.wormbase.org/rest/widget/transcript/{iso}/overview"
+    try:
+        with session.get(url, timeout=10) as response:
+            if not response.ok:
+                return False
+            
+            content_type = response.headers.get('Content-Type', '')
+            if 'application/json' not in content_type:
+                return False
+
+            query = response.json()
+            return 'reason' in query
+            
+    except (requests.exceptions.RequestException, ValueError):
+        return False
 
 
 def _mpqueryiso(isos: list, session: requests.Session) -> dict[str, bool]:
@@ -59,22 +76,24 @@ def _makemergemap(isomap: dict[str, list], isoquery: dict[str, bool]) -> dict[st
 	return mergemap
 
 
-def _mergeisos(tpms: pd.DataFrame, mergemap: dict[str, list]) -> pd.DataFrame:
-	invmap = {iso: transcript for transcript, isos in mergemap.items() for iso in isos}
-	tpms['root'] = tpms['transcript'].map(invmap).fillna(tpms['transcript'])
-	
-	tpms = tpms.groupby('root').sum().reset_index()
-	
-	tpms.drop(columns=['transcript'], inplace=True)
-	tpms.rename(columns={'root': 'transcript'}, inplace=True)
+def _mergeisos(rawcounts: pd.DataFrame, mergemap: dict[str, list]) -> pd.DataFrame:
+    invmap = {iso: transcript for transcript, isos in mergemap.items() for iso in isos}
+    rawcounts['root'] = rawcounts['transcript'].map(invmap).fillna(rawcounts['transcript'])
 
-	return tpms
+    numeric_cols = rawcounts.select_dtypes(include=['number']).columns
+    
+    rawcounts = rawcounts.groupby('root')[numeric_cols].sum().reset_index()
+    rawcounts[numeric_cols] = rawcounts[numeric_cols].astype(int)
+
+    rawcounts.rename(columns={'root': 'transcript'}, inplace=True)
+
+    return rawcounts
 
 
 def resolveiso(tsvpath: Path) -> pd.DataFrame:
-	print("Reading TPMs...")
-	tpms = pd.read_csv(tsvpath, sep='\t')
-	isos = list(tpms['transcript'])
+	print("Reading raw counts...")
+	rawcounts = pd.read_csv(tsvpath, sep='\t')
+	isos = list(rawcounts['transcript'])
 
 	print("Organizing isoforms by transcript...")
 	isomap = _getisomap(isos)
@@ -90,18 +109,18 @@ def resolveiso(tsvpath: Path) -> pd.DataFrame:
 	mergemap = _makemergemap(isomap, isoquery)
 	
 	print("Merging candidates...")
-	tpms = _mergeisos(tpms, mergemap)
+	rawcounts = _mergeisos(rawcounts, mergemap)
 
 	print("Done!")
 
-	return tpms
+	return rawcounts
 
 
 if __name__ == "__main__":
-	DIR = Path("/Users/kvying/Files/ucsb-local/rothman/deg-pipeline")
+	DIR = Path("/home/hanwenying/rothman-sam/deg-pipeline")
 	OUTDIR = DIR / "out"
 	os.makedirs(OUTDIR, exist_ok=True)
 
-	resolved_tpms = resolveiso(DIR/'raw_tpms.tsv')
-	print(resolved_tpms.head())
-	resolved_tpms.to_csv(OUTDIR/'resolved_tpms.tsv', sep='\t')
+	resolved_rawcounts = resolveiso(DIR/'raw_rawcounts.tsv')
+	print(resolved_rawcounts.head())
+	resolved_rawcounts.to_csv(OUTDIR/'resolved_rawcounts.tsv', sep='\t')
