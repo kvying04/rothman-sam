@@ -19,3 +19,4 @@
 *.vcf.gz
 *.csi
 *.rnk
+*.out
