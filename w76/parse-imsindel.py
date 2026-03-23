@@ -6,8 +6,8 @@ ROOT = Path("/home/hanwenying")
 INDELDIR = ROOT / "rothman-sam/w76/imsindel-out"
 OUTDIR = ROOT / "rothman-sam/w76/out/indelouts"
 
-lowgroup = ['P16', 'A1', 'B2', 'C3', 'D4', 'E5', 'F6', 'G7', 'H8']
-highgroup = ['Q17', 'I9', 'J10', 'K11', 'L12', 'M13', 'N14', 'O15']
+lowgroup = ['A1', 'B2', 'C3']
+highgroup = ['M13', 'N14', 'O15']
 
 chroms = ['NC_003279.8', 'NC_003280.10', 'NC_003281.10', 'NC_003282.8', 'NC_003283.11', 'NC_003284.9', 'NC_001328.1']
 
@@ -39,7 +39,7 @@ def compare_chrom_1(chrom: str, lowgroup: list, highgroup: list) -> pd.DataFrame
 	lowdf = pd.concat(lowindels, ignore_index=True)
 	highdf = pd.concat(highindels, ignore_index=True)
 
-	lowdf = lowdf[lowdf.groupby('sttpos')['sttpos'].transform('count') >= (len(lowgroup)-5)] # -5 has some
+	lowdf = lowdf[lowdf.groupby('sttpos')['sttpos'].transform('count') == (len(lowgroup))] # -5 has some
 	lowdf['sttpos'] = lowdf['sttpos'].astype(np.int32)
 	highstarts = list(set((highdf["sttpos"].astype(np.int32))))
 
@@ -51,4 +51,5 @@ def compare_chrom_1(chrom: str, lowgroup: list, highgroup: list) -> pd.DataFrame
 for chrom in chroms:
 	c = compare_chrom_1(chrom, lowgroup, highgroup)
 	if len(c) > 0:
+		print(chrom, len(c))
 		c.to_csv(OUTDIR / f"{chrom}.tsv", sep='\t', index=False)
