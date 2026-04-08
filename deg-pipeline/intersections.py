@@ -142,7 +142,6 @@ def _setop(row: pd.Series, loss_strains: list, keep_strains: list) -> bool:
 
 
 def findsigdegs(degdir: Path, sigmatrixpath: Path, loss_strains: list, keep_strains: list, export: Path=None) -> list:
-	# tpms = pd.read_csv(tpmpath, sep='\t').reset_index(drop=True)
 	degs = {}
 	for degfile in degdir.iterdir():
 		if degfile.is_file():
@@ -168,18 +167,17 @@ def findsigdegs(degdir: Path, sigmatrixpath: Path, loss_strains: list, keep_stra
 
 
 if __name__ == "__main__":
-	DIR = Path("/Users/kvying/Files/ucsb-local/rothman/deg-pipeline")
+	DIR = Path("/home/hanwenying/rothman-sam/deg-pipeline")
 	OUTDIR = DIR / "out"
-	DEGDIR = OUTDIR / 'degs'
-	CANDIDATESDIR = OUTDIR / 'candidates'
+	DEGDIR = OUTDIR / 'degs-rawcount'
+	CANDIDATESDIR = OUTDIR / 'candidates-rawcount'
 	os.makedirs(OUTDIR, exist_ok=True)
 	os.makedirs(DEGDIR, exist_ok=True)
 	os.makedirs(CANDIDATESDIR, exist_ok=True)
 
 	loss_strains = ['CX11314']
 	keep_strains = ['LKC34', 'ED3017', 'JU775', 'MY16', 'MY23', 'JT11398', 'CB4856']
-	sm = sigmatrix(OUTDIR/'resolved_tpms.tsv', loss_strains, keep_strains, nworkers=4, export=DEGDIR)
-	sm.to_csv(OUTDIR/'sigmatrix.tsv', sep='\t', index=False)
+	sm = sigmatrix(OUTDIR/'resolved_rawcounts.tsv', loss_strains, keep_strains, nworkers=8, export=DEGDIR)
+	sm.to_csv(OUTDIR/'sigmatrix_rawcounts.tsv', sep='\t', index=False)
 
-	sigdegs = findsigdegs(DEGDIR, OUTDIR/'sigmatrix.tsv', loss_strains, keep_strains, CANDIDATESDIR)
-	
+	sigdegs = findsigdegs(DEGDIR, OUTDIR / 'sigmatrix_rawcounts.tsv', loss_strains, keep_strains, CANDIDATESDIR)

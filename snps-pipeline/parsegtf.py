@@ -29,7 +29,7 @@ def convertchromosomes(locmappath: Path, chromosomemap: dict) -> None:
 
 
 if __name__ == "__main__":
-	DIR = Path("/home/hanwenying/rothman")
+	DIR = Path("/home/hanwenying/rothman-sam")
 	REFDIR = DIR / "ref"
 	OUTDIR = DIR / "snps-pipeline/out"
 	os.makedirs(OUTDIR, exist_ok=True)

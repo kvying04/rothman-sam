@@ -91,8 +91,8 @@ if __name__ == "__main__":
 	OUTDIR = DIR / "snps-pipeline/out"
 	OUTPATH = OUTDIR / "2025clean.vcf"
 
-	keep_strains = ['N2', 'LKC34', 'ED3017', 'JU775', 'MY16', 'MY23', 'JT11398', 'CB4856']
-	loss_strains = ['CX11314']
+	keep_strains = ['N2', 'LKC34', 'ED3017', 'JU775', 'MY16', 'MY23', 'JT11398', 'CB4856', 'P16', 'A1', 'B2', 'C3', 'D4', 'E5', 'F6', 'G7', 'H8']
+	loss_strains = ['CX11314', 'Q17', 'I9', 'J10', 'K11', 'L12', 'M13', 'N14', 'O15']
 	isolates = keep_strains + loss_strains
 
 	# vcfdf = loadvcf(VCFPATH, OUTPATH, isolates, None)
